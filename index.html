@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b8f72">
+
+<title>PillGuard</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  background:#f4f8f7;
+  color:#17352f;
+  padding-bottom:90px;
+}
+
+header{
+  background:linear-gradient(135deg,#087f68,#10b88f);
+  color:white;
+  padding:25px 20px 35px;
+  border-radius:0 0 28px 28px;
+}
+
+.logo{
+  font-size:25px;
+  font-weight:800;
+}
+
+.subtitle{
+  margin-top:6px;
+  opacity:.85;
+}
+
+.container{
+  max-width:650px;
+  margin:auto;
+  padding:18px;
+}
+
+.card{
+  background:white;
+  border-radius:22px;
+  padding:20px;
+  margin-bottom:16px;
+  box-shadow:0 8px 25px rgba(0,0,0,.06);
+}
+
+.next{
+  margin-top:-25px;
+}
+
+.label{
+  font-size:13px;
+  color:#6c817b;
+  font-weight:bold;
+  text-transform:uppercase;
+}
+
+.next-time{
+  font-size:42px;
+  font-weight:800;
+  margin:8px 0;
+  color:#087f68;
+}
+
+.med-name{
+  font-size:21px;
+  font-weight:700;
+}
+
+.med-dose{
+  color:#71847f;
+  margin-top:5px;
+}
+
+button{
+  border:0;
+  cursor:pointer;
+  border-radius:15px;
+  padding:14px 18px;
+  font-size:16px;
+  font-weight:bold;
+}
+
+.primary{
+  width:100%;
+  background:#087f68;
+  color:white;
+  margin-top:18px;
+}
+
+.secondary{
+  background:#e5f5f0;
+  color:#087f68;
+}
+
+.danger{
+  background:#ffe9e9;
+  color:#c33;
+}
+
+.section-title{
+  font-size:20px;
+  margin-bottom:15px;
+}
+
+.schedule{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:14px 0;
+  border-bottom:1px solid #edf1ef;
+}
+
+.schedule:last-child{
+  border-bottom:0;
+}
+
+.time{
+  font-weight:800;
+  width:55px;
+}
+
+.status{
+  margin-left:auto;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.done{
+  color:#0a9a72;
+}
+
+.pending{
+  color:#e29b00;
+}
+
+input{
+  width:100%;
+  padding:14px;
+  border:1px solid #dce7e3;
+  border-radius:13px;
+  margin:7px 0 13px;
+  font-size:16px;
+}
+
+.form-title{
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.empty{
+  text-align:center;
+  padding:25px 10px;
+  color:#82938e;
+}
+
+.bottom{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  height:75px;
+  background:white;
+  border-top:1px solid #e3ece8;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  z-index:10;
+}
+
+.nav{
+  background:none;
+  padding:8px;
+  color:#81918d;
+  font-size:12px;
+}
+
+.nav.active{
+  color:#087f68;
+}
+
+.icon{
+  display:block;
+  font-size:22px;
+  margin-bottom:3px;
+}
+
+.hidden{
+  display:none;
+}
+
+.warning{
+  font-size:12px;
+  color:#7a8985;
+  line-height:1.5;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">💊 PillGuard</div>
+  <div class="subtitle">Sua rotina de medicamentos organizada.</div>
+</header>
+
+<main class="container">
+
+  <!-- INÍCIO -->
+  <section id="home">
+
+    <div class="card next">
+      <div class="label">Próximo medicamento</div>
+
+      <div class="next-time" id="nextTime">20:00</div>
+
+      <div class="med-name" id="nextName">
+        Medicamento
+      </div>
+
+      <div class="med-dose" id="nextDose">
+        2 comprimidos
+      </div>
+
+      <button class="primary" onclick="takeNext()">
+        ✓ TOMAR AGORA
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Hoje</div>
+      <div id="todayList"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Seu PillGuard</div>
+
+      <p style="font-size:15px;margin-bottom:12px;">
+        🟢 Dispositivo pronto
+      </p>
+
+      <p style="font-size:14px;color:#71847f;">
+        O dispositivo físico será conectado aqui futuramente através de Bluetooth.
+      </p>
+    </div>
+
+  </section>
+
+
+  <!-- MEDICAMENTOS -->
+
+  <section id="medications" class="hidden">
+
+    <div class="card">
+
+      <div class="section-title">
+        Adicionar medicamento
+      </div>
+
+      <div class="form-title">Nome</div>
+      <input id="medName" placeholder="Ex.: Losartana">
+
+      <div class="form-title">Dose</div>
+      <input id="medDose" placeholder="Ex.: 1 comprimido">
+
+      <div class="form-title">Horário</div>
+      <input id="medTime" type="time">
+
+      <button class="primary" onclick="addMedication()">
+        + Adicionar medicamento
+      </button>
+
+    </div>
+
+    <div class="card">
+
+      <div class="section-title">
+        Seus medicamentos
+      </div>
+
+      <div id="medList"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- HISTÓRICO -->
+
+  <section id="history" class="hidden">
+
+    <div class="card">
+
+      <div class="section-title">
+        Histórico
+      </div>
+
+      <div id="historyList"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- DISPOSITIVO -->
+
+  <section id="device" class="hidden">
+
+    <div class="card">
+
+      <div class="section-title">
+        PillGuard
+      </div>
+
+      <div style="font-size:50px;text-align:center;margin:20px;">
+        💊
+      </div>
+
+      <h2 style="text-align:center;">
+        Dispositivo não conectado
+      </h2>
+
+      <p style="text-align:center;color:#71847f;margin-top:10px;">
+        Quando o hardware estiver pronto, esta tela poderá mostrar conexão,
+        bateria e compartimentos.
+      </p>
+
+      <button class="primary" onclick="connectDevice()">
+        🔵 Conectar PillGuard
+      </button>
+
+    </div>
+
+    <div class="card">
+
+      <div class="section-title">
+        Compartimentos
+      </div>
+
+      <div class="schedule">
+        <span>💊</span>
+        <span>Compartimento 1</span>
+        <span class="status">Pronto</span>
+      </div>
+
+      <div class="schedule">
+        <span>💊</span>
+        <span>Compartimento 2</span>
+        <span class="status">Pronto</span>
+      </div>
+
+      <div class="schedule">
+        <span>💊</span>
+        <span>Compartimento 3</span>
+        <span class="status">Pronto</span>
+      </div>
+
+      <div class="schedule">
+        <span>💊</span>
+        <span>Compartimento 4</span>
+        <span class="status">Pronto</span>
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<!-- MENU -->
+
+<nav class="bottom">
+
+  <button class="nav active" onclick="showPage('home',this)">
+    <span class="icon">🏠</span>
+    Início
+  </button>
+
+  <button class="nav" onclick="showPage('medications',this)">
+    <span class="icon">💊</span>
+    Remédios
+  </button>
+
+  <button class="nav" onclick="showPage('history',this)">
+    <span class="icon">📋</span>
+    Histórico
+  </button>
+
+  <button class="nav" onclick="showPage('device',this)">
+    <span class="icon">⚙️</span>
+    PillGuard
+  </button>
+
+</nav>
+
+
+<script>
+
+let medications =
+JSON.parse(localStorage.getItem("pillguard_medications")) || [
+  {
+    name:"Medicamento",
+    dose:"2 comprimidos",
+    time:"20:00",
+    taken:false
+  }
+];
+
+let history =
+JSON.parse(localStorage.getItem("pillguard_history")) || [];
+
+
+function save(){
+
+  localStorage.setItem(
+    "pillguard_medications",
+    JSON.stringify(medications)
+  );
+
+  localStorage.setItem(
+    "pillguard_history",
+    JSON.stringify(history)
+  );
+
+}
+
+
+function showPage(page,button){
+
+  document.querySelectorAll("main section")
+    .forEach(x=>x.classList.add("hidden"));
+
+  document.getElementById(page)
+    .classList.remove("hidden");
+
+  document.querySelectorAll(".nav")
+    .forEach(x=>x.classList.remove("active"));
+
+  button.classList.add("active");
+
+  render();
+
+}
+
+
+function addMedication(){
+
+  const name =
+    document.getElementById("medName").value.trim();
+
+  const dose =
+    document.getElementById("medDose").value.trim();
+
+  const time =
+    document.getElementById("medTime").value;
+
+  if(!name || !dose || !time){
+
+    alert("Preencha nome, dose e horário.");
+
+    return;
+  }
+
+  medications.push({
+    name:name,
+    dose:dose,
+    time:time,
+    taken:false
+  });
+
+  save();
+
+  document.getElementById("medName").value="";
+  document.getElementById("medDose").value="";
+  document.getElementById("medTime").value="";
+
+  alert("Medicamento adicionado!");
+
+  render();
+
+}
+
+
+function takeNext(){
+
+  if(medications.length===0){
+
+    alert("Nenhum medicamento cadastrado.");
+
+    return;
+  }
+
+  let next =
+    medications
+      .slice()
+      .sort((a,b)=>a.time.localeCompare(b.time))[0];
+
+  next.taken=true;
+
+  history.push({
+
+    name:next.name,
+    dose:next.dose,
+    time:new Date().toLocaleTimeString(
+      "pt-BR",
+      {
+        hour:"2-digit",
+        minute:"2-digit"
+      }
+    ),
+    date:new Date().toLocaleDateString("pt-BR")
+
+  });
+
+  save();
+
+  alert("✓ Medicamento registrado como tomado!");
+
+  render();
+
+}
+
+
+function deleteMedication(index){
+
+  if(confirm("Excluir este medicamento?")){
+
+    medications.splice(index,1);
+
+    save();
+
+    render();
+
+  }
+
+}
+
+
+function render(){
+
+  /*
+   * PRÓXIMO MEDICAMENTO
+   */
+
+  if(medications.length){
+
+    let sorted =
+      medications
+      .slice()
+      .sort((a,b)=>a.time.localeCompare(b.time));
+
+    let next=sorted[0];
+
+    document.getElementById("nextTime")
+      .textContent=next.time;
+
+    document.getElementById("nextName")
+      .textContent=next.name;
+
+    document.getElementById("nextDose")
+      .textContent=next.dose;
+
+  }
+
+
+  /*
+   * HOJE
+   */
+
+  const today =
+    document.getElementById("todayList");
+
+  if(!medications.length){
+
+    today.innerHTML=
+      '<div class="empty">Nenhum medicamento cadastrado.</div>';
+
+  }else{
+
+    today.innerHTML="";
+
+    medications
+      .slice()
+      .sort((a,b)=>a.time.localeCompare(b.time))
+      .forEach((med,index)=>{
+
+        today.innerHTML+=`
+
+          <div class="schedule">
+
+            <div class="time">
+              ${med.time}
+            </div>
+
+            <div>
+              <strong>${med.name}</strong><br>
+              <small>${med.dose}</small>
+            </div>
+
+            <div class="status ${
+              med.taken ? "done":"pending"
+            }">
+
+              ${
+                med.taken
+                ? "✓ Tomado"
+                : "● Pendente"
+              }
+
+            </div>
+
+          </div>
+
+        `;
+
+      });
+
+  }
+
+
+  /*
+   * MEDICAMENTOS
+   */
+
+  const medList =
+    document.getElementById("medList");
+
+  if(!medications.length){
+
+    medList.innerHTML=
+      '<div class="empty">Nenhum medicamento cadastrado.</div>';
+
+  }else{
+
+    medList.innerHTML="";
+
+    medications.forEach((med,index)=>{
+
+      medList.innerHTML+=`
+
+        <div class="schedule">
+
+          <div style="font-size:25px">
+            💊
+          </div>
+
+          <div>
+            <strong>${med.name}</strong><br>
+            <small>
+              ${med.dose} • ${med.time}
+            </small>
+          </div>
+
+          <button
+            class="danger"
+            onclick="deleteMedication(${index})">
+            ×
+          </button>
+
+        </div>
+
+      `;
+
+    });
+
+  }
+
+
+  /*
+   * HISTÓRICO
+   */
+
+  const historyList =
+    document.getElementById("historyList");
+
+  if(!history.length){
+
+    historyList.innerHTML=
+      '<div class="empty">Ainda não há registros.</div>';
+
+  }else{
+
+    historyList.innerHTML="";
+
+    history
+      .slice()
+      .reverse()
+      .forEach(item=>{
+
+        historyList.innerHTML+=`
+
+          <div class="schedule">
+
+            <div style="font-size:25px">
+              ✓
+            </div>
+
+            <div>
+              <strong>${item.name}</strong><br>
+              <small>
+                ${item.dose} • ${item.time}
+              </small>
+            </div>
+
+            <div class="status done">
+              Tomado
+            </div>
+
+          </div>
+
+        `;
+
+      });
+
+  }
+
+}
+
+
+function connectDevice(){
+
+  alert(
+    "A conexão Bluetooth será adicionada na próxima etapa. " +
+    "O aplicativo já está preparado para receber o PillGuard físico."
+  );
+
+}
+
+
+render();
+
+</script>
+
+</body>
+</html>
